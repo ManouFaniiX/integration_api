@@ -1,8 +1,12 @@
-import type { PokemonListResponse } from "../types/pokemon.types";
+import type {
+  CreatedPokemon,
+  PokemonListResponse,
+} from "../types/pokemon.types";
 
-type Pokemon = {
-  [key: string]: unknown;
-};
+interface CreatePokemonResponse {
+  message: string;
+  pokemon: CreatedPokemon;
+}
 
 const API_URL = "https://pokeapi.co/api/v2";
 
@@ -18,7 +22,9 @@ export async function getPokemons(): Promise<PokemonListResponse> {
   return response.json();
 }
 
-export async function createPokemon(pokemon: Pokemon) {
+export async function createPokemon(
+  pokemon: CreatedPokemon
+): Promise<CreatePokemonResponse> {
   const response = await fetch("/api/pokemons", {
     method: "POST",
     headers: {

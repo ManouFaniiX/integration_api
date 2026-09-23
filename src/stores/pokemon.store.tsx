@@ -1,16 +1,9 @@
 import { create } from "zustand";
-
-interface Pokemon {
-  id: string;
-  name: string;
-  type: string;
-  height: number;
-  weight: number;
-}
+import type { CreatedPokemon } from "@/features/pokemon/types/pokemon.types";
 
 interface PokemonStore {
-  pokemons: Pokemon[];
-  addPokemon: (pokemon: Pokemon) => void;
+  pokemons: CreatedPokemon[];
+  addPokemon: (pokemon: CreatedPokemon) => void;
 }
 
 export const usePokemonStore = create<PokemonStore>((set) => ({
