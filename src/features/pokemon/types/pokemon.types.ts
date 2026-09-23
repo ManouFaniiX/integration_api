@@ -9,3 +9,11 @@ export interface PokemonListResponse {
   previous: string | null;
   results: PokemonListItem[];
 }
+
+export interface CreatedPokemon {
+  id: string;
+  name: string;
+  type: string;
+  height: number;
+  weight: number;
+}

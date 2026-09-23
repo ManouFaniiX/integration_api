@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
+import { useAddPokemon } from "@/features/pokemon/hooks/usePokemon";
 import { createPokemon } from "@/features/pokemon/services/pokemon.service";
 
 export default function CreatePokemonForm() {
-  const router = useRouter();
+  const addPokemon = useAddPokemon();
 
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,15 +23,18 @@ export default function CreatePokemonForm() {
     }
 
     try {
+      setIsSubmitting(true);
+
       const newPokemon = {
         id: crypto.randomUUID(),
-        name,
+        name: name.trim(),
         type,
         height: Number(height),
         weight: Number(weight),
       };
 
-      await createPokemon(newPokemon);
+      const response = await createPokemon(newPokemon);
+      addPokemon(response.pokemon);
 
       setName("");
       setType("");
@@ -38,11 +42,11 @@ export default function CreatePokemonForm() {
       setWeight("");
 
       alert("Pokémon créé avec succès !");
-
-      router.refresh();
     } catch (error) {
       console.error(error);
       alert("Erreur lors de la création du Pokémon");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -104,6 +108,8 @@ export default function CreatePokemonForm() {
         <input
           id="height"
           type="number"
+          min="0.1"
+          step="0.1"
           value={height}
           onChange={(e) => setHeight(e.target.value)}
           placeholder="Ex: 15"
@@ -119,6 +125,8 @@ export default function CreatePokemonForm() {
         <input
           id="weight"
           type="number"
+          min="0.1"
+          step="0.1"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
           placeholder="Ex: 80"
@@ -128,9 +136,10 @@ export default function CreatePokemonForm() {
 
       <button
         type="submit"
-        className="rounded-md bg-black px-4 py-2 text-white"
+        disabled={isSubmitting}
+        className="rounded-md bg-black px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Créer le Pokémon
+        {isSubmitting ? "Création..." : "Créer le Pokémon"}
       </button>
     </form>
   );
